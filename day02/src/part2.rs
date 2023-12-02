@@ -5,13 +5,6 @@ pub struct Game {
     pub power: i32,
 }
 
-#[derive(Debug)]
-struct ColorMaxes {
-    blue: i32,
-    red: i32,
-    green: i32,
-}
-
 pub enum Color {
     Blue(i32),
     Red(i32),
@@ -35,25 +28,20 @@ impl Color {
 
 impl Game {
     pub fn new(line: &str) -> Self {
+        let (mut max_blue, mut max_red, mut max_green) = (0, 0, 0);
+
         let rounds = line.split(':').last().unwrap();
-        let ColorMaxes { blue, red, green } = Game::get_color_maxes(rounds);
-        Self {
-            power: blue * red * green,
-        }
-    }
-
-    fn get_color_maxes(rounds: &str) -> ColorMaxes {
-        let (mut blue, mut red, mut green) = (0, 0, 0);
-
         rounds.split(';').for_each(|round| {
             round.split(',').map(Color::new).for_each(|c| match c {
-                Color::Blue(n) => blue = cmp::max(blue, n),
-                Color::Red(n) => red = cmp::max(red, n),
-                Color::Green(n) => green = cmp::max(green, n),
+                Color::Blue(n) => max_blue = cmp::max(max_blue, n),
+                Color::Red(n) => max_red = cmp::max(max_red, n),
+                Color::Green(n) => max_green = cmp::max(max_green, n),
             })
         });
 
-        ColorMaxes { blue, red, green }
+        Self {
+            power: max_blue * max_red * max_green,
+        }
     }
 }
 
