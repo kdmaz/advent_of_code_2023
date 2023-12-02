@@ -1,4 +1,4 @@
-const NUMS: &'static [&str] = &[
+const NUMS: &[&str] = &[
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
 ];
 
@@ -41,7 +41,7 @@ pub fn part2(input: &str) -> i32 {
             }
             let last = last.unwrap();
 
-            format!("{}{}", first, last).parse::<i32>().unwrap()
+            format!("{first}{last}").parse::<i32>().unwrap()
         })
         .sum()
 }
