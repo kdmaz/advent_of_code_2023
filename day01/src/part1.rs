@@ -1,11 +1,11 @@
-pub fn part1(input: &str) -> i32 {
+pub fn part1(input: &str) -> u32 {
     input
         .lines()
         .map(|line| {
-            let chars = line.chars();
-            let first = chars.clone().find(|c| c.is_ascii_digit()).unwrap();
-            let last = chars.rev().find(|c| c.is_ascii_digit()).unwrap();
-            format!("{first}{last}").parse::<i32>().unwrap()
+            let mut chars = line.chars();
+            let first = chars.find_map(|c| c.to_digit(10)).unwrap();
+            let last = chars.rev().find_map(|c| c.to_digit(10)).unwrap_or(first);
+            first * 10 + last
         })
         .sum()
 }
