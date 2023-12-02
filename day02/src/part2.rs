@@ -35,21 +35,18 @@ impl Color {
 
 impl Game {
     pub fn new(line: &str) -> Self {
-        let mut split = line.split(':');
-        split.next().unwrap();
-
-        let ColorMaxes { blue, red, green } = Game::get_color_maxes(split.next().unwrap());
-
+        let rounds = line.split(':').last().unwrap();
+        let ColorMaxes { blue, red, green } = Game::get_color_maxes(rounds);
         Self {
             power: blue * red * green,
         }
     }
 
-    fn get_color_maxes(text: &str) -> ColorMaxes {
+    fn get_color_maxes(rounds: &str) -> ColorMaxes {
         let (mut blue, mut red, mut green) = (0, 0, 0);
 
-        text.split(';').for_each(|text| {
-            text.split(',').map(Color::new).for_each(|c| match c {
+        rounds.split(';').for_each(|round| {
+            round.split(',').map(Color::new).for_each(|c| match c {
                 Color::Blue(n) => blue = cmp::max(blue, n),
                 Color::Red(n) => red = cmp::max(red, n),
                 Color::Green(n) => green = cmp::max(green, n),

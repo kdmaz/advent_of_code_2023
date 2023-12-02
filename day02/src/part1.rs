@@ -51,9 +51,13 @@ impl Game {
         text.split(' ').last().unwrap().parse::<i32>().unwrap()
     }
 
-    fn get_is_possible(text: &str) -> bool {
-        text.split(';')
-            .all(|text| text.split(',').map(Color::new).all(|c| c.get_is_possible()))
+    fn get_is_possible(rounds: &str) -> bool {
+        rounds.split(';').all(|round| {
+            round
+                .split(',')
+                .map(Color::new)
+                .all(|c| c.get_is_possible())
+        })
     }
 }
 
@@ -82,7 +86,7 @@ mod tests {
     fn part1_input() {
         let input = include_str!("../input.txt");
         let output = part1(input);
-        let expected = 0;
+        let expected = 2528;
         assert_eq!(output, expected);
     }
 }
