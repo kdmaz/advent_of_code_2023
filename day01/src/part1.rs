@@ -2,9 +2,9 @@ pub fn part1(input: &str) -> i32 {
     input
         .lines()
         .map(|line| {
-            let chars: Vec<char> = line.chars().collect();
-            let first = chars.iter().find(|c| c.is_ascii_digit()).unwrap();
-            let last = chars.iter().rev().find(|c| c.is_ascii_digit()).unwrap();
+            let chars = line.chars();
+            let first = chars.clone().find(|c| c.is_ascii_digit()).unwrap();
+            let last = chars.rev().find(|c| c.is_ascii_digit()).unwrap();
             format!("{first}{last}").parse::<i32>().unwrap()
         })
         .sum()
