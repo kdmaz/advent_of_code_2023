@@ -2,10 +2,10 @@ pub fn part1(input: &str) -> i32 {
     input
         .lines()
         .map(|line| {
-            let chars: Vec<char> = line.chars().filter(|c| c.is_ascii_digit()).collect();
-            format!("{}{}", chars[0], chars[chars.len() - 1])
-                .parse::<i32>()
-                .unwrap()
+            let chars: Vec<char> = line.chars().collect();
+            let first = chars.iter().find(|c| c.is_ascii_digit()).unwrap();
+            let last = chars.iter().rev().find(|c| c.is_ascii_digit()).unwrap();
+            format!("{}{}", first, last).parse::<i32>().unwrap()
         })
         .sum()
 }
