@@ -9,37 +9,37 @@ pub struct Game {
 }
 
 pub enum Color {
-    BLUE(i32),
-    RED(i32),
-    GREEN(i32),
+    Blue(i32),
+    Red(i32),
+    Green(i32),
 }
 
 impl Color {
     pub fn new(text: &str) -> Self {
-        let mut split = text.trim().split(" ");
+        let mut split = text.trim().split(' ');
         let num = split.next().unwrap().parse().unwrap();
         let color = split.next().unwrap();
 
         match color {
-            "blue" => Self::BLUE(num),
-            "red" => Self::RED(num),
-            "green" => Self::GREEN(num),
+            "blue" => Self::Blue(num),
+            "red" => Self::Red(num),
+            "green" => Self::Green(num),
             _ => unreachable!(),
         }
     }
 
     pub fn get_is_possible(&self) -> bool {
         match self {
-            Color::BLUE(n) => *n <= MAX_BLUE_CUBES,
-            Color::RED(n) => *n <= MAX_RED_CUBES,
-            Color::GREEN(n) => *n <= MAX_GREEN_CUBES,
+            Color::Blue(n) => *n <= MAX_BLUE_CUBES,
+            Color::Red(n) => *n <= MAX_RED_CUBES,
+            Color::Green(n) => *n <= MAX_GREEN_CUBES,
         }
     }
 }
 
 impl Game {
     pub fn new(line: &str) -> Self {
-        let mut split = line.split(":");
+        let mut split = line.split(':');
 
         Self {
             id: Game::parse_id(split.next().unwrap()),
@@ -48,12 +48,12 @@ impl Game {
     }
 
     fn parse_id(text: &str) -> i32 {
-        text.split(" ").last().unwrap().parse::<i32>().unwrap()
+        text.split(' ').last().unwrap().parse::<i32>().unwrap()
     }
 
     fn get_is_possible(text: &str) -> bool {
-        text.split(";")
-            .all(|text| text.split(",").map(Color::new).all(|c| c.get_is_possible()))
+        text.split(';')
+            .all(|text| text.split(',').map(Color::new).all(|c| c.get_is_possible()))
     }
 }
 
