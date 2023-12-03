@@ -47,44 +47,46 @@ impl Grid {
     }
 
     fn has_adjacent_symbol(&self, pos: Position) -> bool {
-        let r = pos.y;
-        let c = pos.x;
+        let has_adjacent_symbol = |offset_x: i32, offset_y: i32| {
+            let left_out_of_bounds = pos.x as i32 + offset_x < 0;
+            let top_out_of_bounds = pos.y as i32 + offset_y < 0;
+            let right_out_of_bounds = pos.x as i32 + offset_x > self.rows[pos.y].len() as i32 - 1;
+            let bottom_out_of_bounds = pos.y as i32 + offset_y > self.rows.len() as i32 - 1;
 
-        let left_out_of_bounds = c == 0;
-        let top_out_of_bounds = r == 0;
-        let right_out_of_bounds = c + 1 > self.rows[r].len() - 1;
-        let bottom_out_of_bounds = r + 1 > self.rows.len() - 1;
-
-        let is_symbol = |char: char| !char.is_ascii_digit() && char != '.';
+            if left_out_of_bounds
+                || top_out_of_bounds
+                || right_out_of_bounds
+                || bottom_out_of_bounds
+            {
+                false
+            } else {
+                let x = (pos.x as i32 + offset_x) as usize;
+                let y = (pos.y as i32 + offset_y) as usize;
+                let c = self.rows[y][x];
+                !c.is_ascii_digit() && c != '.'
+            }
+        };
 
         // top left
-        (!left_out_of_bounds && !top_out_of_bounds && is_symbol(self.rows[r - 1][c - 1]))
+        has_adjacent_symbol(-1, -1)
             // top
-            || (!top_out_of_bounds && is_symbol(self.rows[r - 1][c]))
+            || has_adjacent_symbol(0, -1)
             // top right
-            || (!right_out_of_bounds && !top_out_of_bounds && is_symbol(self.rows[r - 1][c + 1]))
+            || has_adjacent_symbol(1, -1)
             // right
-            || (!right_out_of_bounds && is_symbol(self.rows[r][c + 1]))
+            || has_adjacent_symbol(1, 0)
             // bottom right
-            || (!bottom_out_of_bounds
-                && !right_out_of_bounds
-                && is_symbol(self.rows[r + 1][c + 1]))
+            || has_adjacent_symbol(1, 1)
             // bottom
-            || (!bottom_out_of_bounds && is_symbol(self.rows[r + 1][c]))
+            || has_adjacent_symbol(0, 1)
             // bottom left
-            || (!bottom_out_of_bounds && !left_out_of_bounds && is_symbol(self.rows[r + 1][c - 1]))
+            || has_adjacent_symbol(-1, 1)
             // left
-            || (!left_out_of_bounds && is_symbol(self.rows[r][c - 1]))
+            || has_adjacent_symbol(-1, 0)
     }
 
     fn next_pos_is_digit(&self, pos: Position) -> bool {
-        let next_pos = Position::new(pos.x + 1, pos.y);
-        if next_pos.x > self.rows.len() - 1 {
-            false
-        } else {
-            let c = self.rows[next_pos.y][next_pos.x];
-            c.is_ascii_digit()
-        }
+        matches!(self.rows[pos.y].get(pos.x + 1), Some(c) if c.is_ascii_digit())
     }
 }
 
