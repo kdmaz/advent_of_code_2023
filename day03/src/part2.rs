@@ -3,16 +3,13 @@ pub fn part2(input: &str) -> i32 {
     let grid = Grid::new(rows);
     let mut gear_ratio_total = 0;
 
-    for (r, row) in grid.rows.iter().enumerate() {
-        for (c, &char) in row.iter().enumerate() {
-            if char != '*' {
+    for (y, row) in grid.rows.iter().enumerate() {
+        for (x, &c) in row.iter().enumerate() {
+            if c != '*' {
                 continue;
             }
 
-            if let Some((n1, n2)) = grid.get_two_adjacent_part_nums(Position {
-                row_index: r,
-                col_index: c,
-            }) {
+            if let Some((n1, n2)) = grid.get_two_adjacent_part_nums(Position { y, x }) {
                 gear_ratio_total += n1.value * n2.value;
             }
         }
@@ -31,8 +28,8 @@ impl Grid {
     }
 
     fn get_two_adjacent_part_nums(&self, pos: Position) -> Option<(GridNumber, GridNumber)> {
-        let r = pos.row_index as i32;
-        let c = pos.col_index as i32;
+        let r = pos.y as i32;
+        let c = pos.x as i32;
 
         let get_is_new_num = |r: i32, c: i32, nums: &Vec<GridNumber>| {
             let r = r as usize;
@@ -94,7 +91,7 @@ impl Grid {
             let r = *r;
             let c = *c;
             if get_is_digit(r, c) && get_is_new_num(r, c, &nums) {
-                nums.push(self.get_grid_num(Position::new(r as usize, c as usize)));
+                nums.push(self.get_grid_num(Position::new(c as usize, r as usize)));
             }
 
             nums
@@ -109,13 +106,13 @@ impl Grid {
     }
 
     fn get_grid_num(&self, pos: Position) -> GridNumber {
-        let r = pos.row_index;
-        let mut start = pos.col_index;
+        let r = pos.y;
+        let mut start = pos.x;
         while start > 0 && self.rows[r][start - 1].is_ascii_digit() {
             start -= 1;
         }
 
-        let mut end = pos.col_index;
+        let mut end = pos.x;
         while end < self.rows[r].len() - 1 && self.rows[r][end + 1].is_ascii_digit() {
             end += 1;
         }
@@ -150,16 +147,13 @@ impl GridNumber {
 
 #[derive(Clone, Copy, Debug)]
 struct Position {
-    row_index: usize,
-    col_index: usize,
+    x: usize,
+    y: usize,
 }
 
 impl Position {
-    fn new(row_index: usize, col_index: usize) -> Self {
-        Position {
-            row_index,
-            col_index,
-        }
+    fn new(x: usize, y: usize) -> Self {
+        Position { x, y }
     }
 }
 
