@@ -11,7 +11,7 @@ pub fn part1(input: &str) -> i32 {
                 continue;
             }
             if let Some(n) = char.to_digit(10) {
-                num.add_char(n as i32);
+                num.add_digit(n as i32);
             } else {
                 continue;
             }
@@ -101,7 +101,7 @@ impl GridNumber {
         }
     }
 
-    fn add_char(&mut self, num: i32) {
+    fn add_digit(&mut self, num: i32) {
         self.value = self.value * 10 + num;
     }
 }
