@@ -1,6 +1,7 @@
 pub fn part1(input: &str) -> i32 {
     let rows = input.lines().map(|line| line.chars().collect()).collect();
-    let mut grid = Grid::new(rows);
+    let grid = Grid::new(rows);
+    let mut part_num_total = 0;
 
     for (r, row) in grid.rows.iter().enumerate() {
         let mut num = GridNumber::new();
@@ -26,27 +27,23 @@ pub fn part1(input: &str) -> i32 {
             }
 
             if num.is_part_number {
-                grid.part_num_total += num.value;
+                part_num_total += num.value;
             }
 
             num = GridNumber::new();
         }
     }
 
-    grid.part_num_total
+    part_num_total
 }
 
 struct Grid {
     rows: Vec<Vec<char>>,
-    part_num_total: i32,
 }
 
 impl Grid {
     fn new(rows: Vec<Vec<char>>) -> Self {
-        Grid {
-            rows,
-            part_num_total: 0,
-        }
+        Grid { rows }
     }
 
     fn has_adjacent_symbol(&self, pos: Position) -> bool {
