@@ -1,29 +1,11 @@
 use std::cmp;
 
-#[derive(Debug)]
-pub struct Game {
-    pub power: i32,
+pub fn part2(input: &str) -> i32 {
+    input.lines().map(Game::new).map(|game| game.power).sum()
 }
 
-pub enum Color {
-    Blue(i32),
-    Red(i32),
-    Green(i32),
-}
-
-impl Color {
-    pub fn new(text: &str) -> Self {
-        let mut split = text.trim().split(' ');
-        let num = split.next().unwrap().parse().unwrap();
-        let color = split.next().unwrap();
-
-        match color {
-            "blue" => Self::Blue(num),
-            "red" => Self::Red(num),
-            "green" => Self::Green(num),
-            _ => unreachable!(),
-        }
-    }
+struct Game {
+    power: i32,
 }
 
 impl Game {
@@ -33,9 +15,9 @@ impl Game {
         let rounds = line.split(':').last().unwrap();
         rounds.split(';').for_each(|round| {
             round.split(',').map(Color::new).for_each(|c| match c {
-                Color::Blue(n) => max_blue = cmp::max(max_blue, n),
-                Color::Red(n) => max_red = cmp::max(max_red, n),
-                Color::Green(n) => max_green = cmp::max(max_green, n),
+                Color::Blue { num_seen } => max_blue = cmp::max(max_blue, num_seen),
+                Color::Red { num_seen } => max_red = cmp::max(max_red, num_seen),
+                Color::Green { num_seen } => max_green = cmp::max(max_green, num_seen),
             })
         });
 
@@ -45,8 +27,25 @@ impl Game {
     }
 }
 
-pub fn part2(input: &str) -> i32 {
-    input.lines().map(Game::new).map(|game| game.power).sum()
+enum Color {
+    Blue { num_seen: i32 },
+    Red { num_seen: i32 },
+    Green { num_seen: i32 },
+}
+
+impl Color {
+    pub fn new(draw: &str) -> Self {
+        let mut draw_parts = draw.trim().split(' ');
+        let num_seen = draw_parts.next().unwrap().parse().unwrap();
+        let color = draw_parts.next().unwrap();
+
+        match color {
+            "blue" => Self::Blue { num_seen },
+            "red" => Self::Red { num_seen },
+            "green" => Self::Green { num_seen },
+            _ => unreachable!(),
+        }
+    }
 }
 
 #[cfg(test)]

@@ -11,9 +11,9 @@ pub fn part1(input: &str) -> i32 {
         .sum()
 }
 
-pub struct Game {
-    pub id: i32,
-    pub is_valid: bool,
+struct Game {
+    id: i32,
+    is_valid: bool,
 }
 
 impl Game {
@@ -37,7 +37,7 @@ impl Game {
     }
 }
 
-pub enum Color {
+enum Color {
     Blue { num_seen: i32 },
     Red { num_seen: i32 },
     Green { num_seen: i32 },
