@@ -9,8 +9,11 @@ pub fn part1(input: &str) -> i32 {
             if !char.is_ascii_digit() {
                 continue;
             }
-
-            num.add_char(char);
+            if let Some(n) = char.to_digit(10) {
+                num.add_char(n as i32);
+            } else {
+                continue;
+            }
 
             let char_pos = Position::new(r, c);
 
@@ -23,7 +26,7 @@ pub fn part1(input: &str) -> i32 {
             }
 
             if num.is_part_number {
-                grid.part_nums.push(num.value.parse::<i32>().unwrap());
+                grid.part_nums.push(num.value);
             }
 
             num = GridNumber::new();
@@ -58,7 +61,7 @@ impl Grid {
         let is_symbol = |char: char| !char.is_ascii_digit() && char != '.';
 
         // top left
-        (!left_out_of_bounds && !top_out_of_bounds && is_symbol(self.rows[r - 1][c - 1])) 
+        (!left_out_of_bounds && !top_out_of_bounds && is_symbol(self.rows[r - 1][c - 1]))
             // top
             || (!top_out_of_bounds && is_symbol(self.rows[r - 1][c]))
             // top right
@@ -89,20 +92,20 @@ impl Grid {
 }
 
 struct GridNumber {
-    value: String,
+    value: i32,
     is_part_number: bool,
 }
 
 impl GridNumber {
     fn new() -> Self {
         Self {
-            value: String::new(),
+            value: 0,
             is_part_number: false,
         }
     }
 
-    fn add_char(&mut self, c: char) {
-        self.value.push(c);
+    fn add_char(&mut self, num: i32) {
+        self.value = self.value * 10 + num;
     }
 }
 
