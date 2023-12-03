@@ -9,7 +9,7 @@ pub fn part2(input: &str) -> i32 {
                 continue;
             }
 
-            if let Some((n1, n2)) = grid.get_two_adjacent_part_nums(Position { y, x }) {
+            if let Some((n1, n2)) = grid.get_two_adjacent_part_nums(Position { x, y }) {
                 gear_ratio_total += n1.value * n2.value;
             }
         }
@@ -28,15 +28,10 @@ impl Grid {
     }
 
     fn get_two_adjacent_part_nums(&self, pos: Position) -> Option<(GridNumber, GridNumber)> {
-        let r = pos.y as i32;
-        let c = pos.x as i32;
-
-        let get_is_new_num = |r: i32, c: i32, nums: &Vec<GridNumber>| {
-            let r = r as usize;
-            let c = c as usize;
+        let get_is_new_num = |pos: Position, nums: &Vec<GridNumber>| {
             for &num in nums.iter() {
-                let is_same_row = r == num.row_index;
-                let is_within_num_bounds = c >= num.start_index && c <= num.end_index;
+                let is_same_row = pos.y == num.y;
+                let is_within_num_bounds = pos.x >= num.start && pos.x <= num.end;
 
                 if is_same_row && is_within_num_bounds {
                     return false;
@@ -46,56 +41,51 @@ impl Grid {
             true
         };
 
-        let get_is_digit = |r: i32, c: i32| {
-            let left_out_of_bounds = c < 0;
-            let top_out_of_bounds = r < 0;
+        let get_is_digit = |x: i32, y: i32| {
+            let left_out_of_bounds = x < 0;
+            let top_out_of_bounds = y < 0;
 
             if left_out_of_bounds || top_out_of_bounds {
                 return false;
             }
 
-            let r = r as usize;
-            let c = c as usize;
+            let pos = Position::new(x as usize, y as usize);
 
-            let right_out_of_bounds = c + 1 > self.rows[r].len() - 1;
-            let bottom_out_of_bounds = r + 1 > self.rows.len();
+            let right_out_of_bounds = pos.x + 1 > self.rows[pos.y].len() - 1;
+            let bottom_out_of_bounds = pos.y + 1 > self.rows.len();
 
             if right_out_of_bounds || bottom_out_of_bounds {
                 return false;
             }
 
-            self.rows[r][c].is_ascii_digit()
+            self.rows[pos.y][pos.x].is_ascii_digit()
         };
 
-        let top_left = (r - 1, c - 1);
-        let top = (r - 1, c);
-        let top_right = (r - 1, c + 1);
-        let right = (r, c + 1);
-        let bottom_right = (r + 1, c + 1);
-        let bottom = (r + 1, c);
-        let bottom_left = (r + 1, c - 1);
-        let left = (r, c - 1);
+        let offsets = [
+            (-1, -1), // top left
+            (0, -1),  // top
+            (1, -1),  // top right
+            (1, 0),   // right
+            (1, 1),   // bottom right
+            (0, 1),   // bottom
+            (-1, 1),  // bottom left
+            (-1, 0),  // left
+        ];
 
-        let nums = [
-            top_left,
-            top,
-            top_right,
-            right,
-            bottom_right,
-            bottom,
-            bottom_left,
-            left,
-        ]
-        .iter()
-        .fold(Vec::with_capacity(3), |mut nums, (r, c)| {
-            let r = *r;
-            let c = *c;
-            if get_is_digit(r, c) && get_is_new_num(r, c, &nums) {
-                nums.push(self.get_grid_num(Position::new(c as usize, r as usize)));
-            }
+        let nums = offsets
+            .iter()
+            .fold(Vec::with_capacity(3), |mut nums, (x_offset, y_offset)| {
+                let x = pos.x as i32 + x_offset;
+                let y = pos.y as i32 + y_offset;
 
-            nums
-        });
+                if get_is_digit(x, y)
+                    && get_is_new_num(Position::new(x as usize, y as usize), &nums)
+                {
+                    nums.push(self.get_grid_num(Position::new(x as usize, y as usize)));
+                }
+
+                nums
+            });
 
         if nums.len() == 2 {
             let mut it = nums.into_iter();
@@ -106,41 +96,40 @@ impl Grid {
     }
 
     fn get_grid_num(&self, pos: Position) -> GridNumber {
-        let r = pos.y;
         let mut start = pos.x;
-        while start > 0 && self.rows[r][start - 1].is_ascii_digit() {
+        while start > 0 && self.rows[pos.y][start - 1].is_ascii_digit() {
             start -= 1;
         }
 
         let mut end = pos.x;
-        while end < self.rows[r].len() - 1 && self.rows[r][end + 1].is_ascii_digit() {
+        while end < self.rows[pos.y].len() - 1 && self.rows[pos.y][end + 1].is_ascii_digit() {
             end += 1;
         }
 
         let mut value = 0;
-        for i in start..=end {
-            value = value * 10 + self.rows[r][i].to_digit(10).unwrap() as i32;
+        for x in start..=end {
+            value = value * 10 + self.rows[pos.y][x].to_digit(10).unwrap() as i32;
         }
 
-        GridNumber::new(r, start, end, value)
+        GridNumber::new(value, pos.y, start, end)
     }
 }
 
 #[derive(Clone, Copy, Debug)]
 struct GridNumber {
     value: i32,
-    row_index: usize,
-    start_index: usize,
-    end_index: usize,
+    y: usize,
+    start: usize,
+    end: usize,
 }
 
 impl GridNumber {
-    fn new(row_index: usize, start_index: usize, end_index: usize, value: i32) -> Self {
+    fn new(value: i32, y: usize, start: usize, end: usize) -> Self {
         Self {
             value,
-            row_index,
-            start_index,
-            end_index,
+            y,
+            start,
+            end,
         }
     }
 }
