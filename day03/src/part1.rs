@@ -26,26 +26,26 @@ pub fn part1(input: &str) -> i32 {
             }
 
             if num.is_part_number {
-                grid.part_nums.push(num.value);
+                grid.part_num_total += num.value;
             }
 
             num = GridNumber::new();
         }
     }
 
-    grid.part_nums.iter().sum()
+    grid.part_num_total
 }
 
 struct Grid {
     rows: Vec<Vec<char>>,
-    part_nums: Vec<i32>,
+    part_num_total: i32,
 }
 
 impl Grid {
     fn new(rows: Vec<Vec<char>>) -> Self {
         Grid {
             rows,
-            part_nums: vec![],
+            part_num_total: 0,
         }
     }
 
