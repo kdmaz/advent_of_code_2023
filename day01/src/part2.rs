@@ -1,63 +1,38 @@
-const NUMS: &[&str] = &[
-    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-];
-
-pub fn part2(input: &str) -> i32 {
+pub fn part2(input: &str) -> u32 {
     input.lines().map(get_num_from_line).sum()
 }
 
-fn get_num_from_line(line: &str) -> i32 {
-    let chars: Vec<char> = line.chars().collect();
-    let mut first = None;
-    'outer: for (i, &c) in chars.iter().enumerate() {
-        if c.is_ascii_digit() {
-            first = Some(c);
-            break;
+fn get_num_from_line(line: &str) -> u32 {
+    let mut it = (0..line.len()).filter_map(|index| {
+        let line = &line[index..];
+
+        if line.starts_with("one") {
+            Some(1)
+        } else if line.starts_with("two") {
+            Some(2)
+        } else if line.starts_with("three") {
+            Some(3)
+        } else if line.starts_with("four") {
+            Some(4)
+        } else if line.starts_with("five") {
+            Some(5)
+        } else if line.starts_with("six") {
+            Some(6)
+        } else if line.starts_with("seven") {
+            Some(7)
+        } else if line.starts_with("eight") {
+            Some(8)
+        } else if line.starts_with("nine") {
+            Some(9)
+        } else {
+            line.chars().next().unwrap().to_digit(10)
         }
+    });
 
-        let word: String = chars[i..chars.len()].iter().collect();
-        for num in NUMS.iter() {
-            if word.starts_with(num) {
-                first = Some(get_digit_from_num(num));
-                break 'outer;
-            }
-        }
-    }
-    let first = first.unwrap();
+    let first = it.next().unwrap();
+    let last = it.last().unwrap_or(first);
 
-    let mut last = None;
-    'outer: for (i, &c) in chars.iter().enumerate().rev() {
-        if c.is_ascii_digit() {
-            last = Some(c);
-            break;
-        }
-
-        let word: String = chars[0..=i].iter().collect();
-        for num in NUMS.iter() {
-            if word.ends_with(num) {
-                last = Some(get_digit_from_num(num));
-                break 'outer;
-            }
-        }
-    }
-    let last = last.unwrap();
-
-    format!("{first}{last}").parse::<i32>().unwrap()
-}
-
-fn get_digit_from_num(num: &str) -> char {
-    match num {
-        "one" => '1',
-        "two" => '2',
-        "three" => '3',
-        "four" => '4',
-        "five" => '5',
-        "six" => '6',
-        "seven" => '7',
-        "eight" => '8',
-        "nine" => '9',
-        _ => unreachable!(),
-    }
+    first * 10 + last
 }
 
 #[cfg(test)]
@@ -89,7 +64,7 @@ mod tests {
     #[case("blahblah3blahblah", 33)]
     #[case("three46754645645645645645four", 34)]
     #[case("4fivefour5", 45)]
-    fn test_get_num_from_line(#[case] line: &str, #[case] expected: i32) {
+    fn line_test(#[case] line: &str, #[case] expected: u32) {
         assert_eq!(get_num_from_line(line), expected);
     }
 }
