@@ -15,3 +15,6 @@ test day +opts='':
 
 bench day:
     cargo bench -q -p {{day}} --bench {{day}}_bench
+
+dhat day part:
+    cargo run --profile dhat --features dhat-heap -p {{day}} --bin {{part}}

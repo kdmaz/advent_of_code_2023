@@ -5,6 +5,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[dependencies]
+dhat = { workspace = true }
+
 [dev-dependencies]
 divan = { workspace = true }
 
@@ -12,3 +15,6 @@ divan = { workspace = true }
 name = "day{{day_number}}_bench"
 path = "benches/benchmarks.rs"
 harness = false
+
+[features]
+dhat-heap = []
