@@ -7,10 +7,8 @@ pub fn part1(input: &str) -> i32 {
     let ranks = input
         .lines()
         .map(|line| {
-            let mut line_parts = line.split(' ');
-            let mut cards_it = line_parts
-                .next()
-                .expect("Expect cards to exist in line")
+            let (cards, bid) = line.split_once(' ').unwrap();
+            let mut cards_it = cards
                 .chars()
                 .map(|c| CardType::try_from(c).expect("Card to be valid CardType"));
             let cards = [
@@ -20,11 +18,7 @@ pub fn part1(input: &str) -> i32 {
                 cards_it.next().expect("Card 4 to exist"),
                 cards_it.next().expect("Card 5 to exist"),
             ];
-            let bid = line_parts
-                .next()
-                .expect("Bid to exist in line")
-                .parse::<i32>()
-                .expect("Bid to be a valid integer");
+            let bid = bid.parse::<i32>().expect("Bid to be a valid integer");
             Hand::new(cards, bid)
         })
         .fold(BTreeSet::new(), |mut ranks, hand| {
