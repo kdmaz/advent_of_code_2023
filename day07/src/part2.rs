@@ -175,6 +175,8 @@ impl From<&Cards> for HandType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use CardType::*;
+    use HandType::*;
 
     #[test]
     fn part2_example() {
@@ -193,22 +195,14 @@ mod tests {
     }
 
     #[rstest::rstest]
-    #[case("AKQJJ", HandType::ThreeOfAKind)]
-    #[case("KQJJJ", HandType::FourOfAKind)]
-    #[case("JTTTT", HandType::FiveOfAKind)]
-    #[case("QQQJJ", HandType::FiveOfAKind)]
-    #[case("KJKJJ", HandType::FiveOfAKind)]
-    #[case("JJAJJ", HandType::FiveOfAKind)]
-    #[case("JJJJJ", HandType::FiveOfAKind)]
-    fn j_card(#[case] cards: &str, #[case] expected: HandType) {
-        let mut it = cards.chars().map(|c| CardType::try_from(c).unwrap());
-        let cards = [
-            it.next().unwrap(),
-            it.next().unwrap(),
-            it.next().unwrap(),
-            it.next().unwrap(),
-            it.next().unwrap(),
-        ];
+    #[case([A, K, Q, J, J], ThreeOfAKind)]
+    #[case([K, Q, J, J, J], FourOfAKind)]
+    #[case([J, T, T, T, T], FiveOfAKind)]
+    #[case([Q, Q, Q, J, J], FiveOfAKind)]
+    #[case([K, J, K, J, J], FiveOfAKind)]
+    #[case([J, J, A, J, J], FiveOfAKind)]
+    #[case([J, J, J, J, J], FiveOfAKind)]
+    fn j_card(#[case] cards: [CardType; 5], #[case] expected: HandType) {
         assert_eq!(HandType::from(&cards), expected);
     }
 }
