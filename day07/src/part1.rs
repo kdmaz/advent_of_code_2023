@@ -84,7 +84,7 @@ struct Hand {
 
 impl Hand {
     fn new(cards: Cards, bid: i32) -> Self {
-        let hand_type = HandType::from(&cards);
+        let hand_type = HandType::new(&cards);
         Self {
             bid,
             hand_type,
@@ -135,8 +135,8 @@ enum HandType {
     HighCard = 1,
 }
 
-impl From<&Cards> for HandType {
-    fn from(cards: &Cards) -> Self {
+impl HandType {
+    fn new(cards: &Cards) -> Self {
         let mut map = HashMap::new();
 
         for &card in cards {
