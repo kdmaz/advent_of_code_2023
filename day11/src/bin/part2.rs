@@ -7,5 +7,5 @@ fn main() {
     let _profiler = dhat::Profiler::new_heap();
 
     let input = include_str!("../../input.txt");
-    println!("{}", day11::part2(input));
+    println!("{}", day11::part2(input, 1_000_000));
 }
